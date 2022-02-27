@@ -101,7 +101,7 @@ Tree* Tree::semanticInclude(TypeLex a, OBJECT_TYPE objType, DATA_TYPE dataType) 
     if (objType == TYPE_VAR)
     {
         memcpy(b.id, a, strlen(a) + 1); b.objectType = objType;
-        b.dataType = dataType; b.data = nullptr; b.isConst = false;
+        b.dataType = dataType; b.isConst = false;
         cur->setLeft(&b); // сделали вершину - переменную
         cur = cur->left;
         return cur;
@@ -134,10 +134,6 @@ void Tree::semanticSetStruct(Tree *addr, Tree *data) {
     if (addr->node->objectType == TYPE_VAR)
         addr->node->objectType = TYPE_STRUCT;
     addr->node->dataStruct = data;
-}
-
-void Tree::semanticSetData(Tree *addr, char *data) {
-    addr->node->data = data;
 }
 
 int Tree::isStruct(Tree* addr, TypeLex a) {
