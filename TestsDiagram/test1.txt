@@ -1,0 +1,84 @@
+struct abc {
+    int a;c
+    const float q;
+    const long l = 0xff;
+};
+
+int main()
+{
+	int a, b = 2, c = 3;
+	long num = 0x1f;
+
+	for (int i = 0; i < c; i++)
+	{
+		int arr;
+        ((()(())
+		int arr;
+
+        }
+        return 1;
+        }}}}
+		int main()
+		{
+		    ;;;;;
+		    {{
+		    {}
+		    {{}}}}
+			int a, b = 2, c = 3;
+			long long num = 0x1f;
+
+			for (int i = 0; i < c; i = i + 1)
+			{
+				short why = 3;
+				b = b + 1e+5;
+
+				for (int j = 0; j + 3 > 1; j--)
+				{
+					;;;;;;;;;;;;;;;
+					(3) - (2) + (1);
+					{{{{{
+						for(int k = 5; (a) - (s) + 3 >= 22 - 55; s += 1) ;
+					}}}}}
+				}
+				a = a + 0x10;
+			}
+			return 0;
+		}
+		)
+		{
+			int a, b = 2, c = 3;
+			long long num = 0x1f;
+
+			for (int i = 0; i < c; i++)
+			{
+				short why = 3;
+				b = b + ret();
+
+				for (int j = 0; j + 3 > 1; j--)
+				{
+					;;;;;;;;;;;;;;;
+					(3) - (2) + (1);
+					{{{{{
+						for(int k = 5; (a) - (s) + 3 >= 22 - 55; s++) ;
+					}}}}}
+				}
+				a = a + 0x10;
+			}
+			return 0;
+		}
+
+		short why = 3;
+		b = b + ret();
+
+		for (int j = 0; j + 3 > 1; j--)
+		{
+			;;;;;;;;;;;;;;;
+			(3) - (2) + (1);
+			{{{{{
+				for(int k = 5; (a) - (s) + 3 >= 22 - 55; s++) ;
+			}}}}}
+		}
+		a = a + 0x10;
+	}
+	return 0;
+}

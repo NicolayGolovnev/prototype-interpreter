@@ -1,0 +1,79 @@
+int arr(){
+return i;
+}
+
+int main()
+{
+	int a, b = 2, c = 3;
+	long long num = 0x1f;
+
+	for (int i = 0; i < c; i++)
+	{
+		int arr;
+		{ int b; }
+		int f;
+		int arr;
+		{ i; }
+		int s;
+		{
+			int a, b = 2, c = 3;
+			long long num = 0x1f;
+
+			for (int i = 0; i < c; i++)
+			{
+				short why = 3;
+				b = b + ret();
+
+				for (int j = 0; j + 3 > 1; j--)
+				{
+					;;;;;;;;;;;;;;;
+					(3) - (2) + (1);
+					{{{{{
+						for(int k = 5; (a) - (s) + 3 >= 22 - 55; s++) ;
+					}}}}}
+				}
+				a = a + 0x10;
+			}
+
+			;
+			0;
+		}
+		;
+
+		{
+			int a, b = 2, c = 3;
+			long long num = 0x1f;
+
+			for (int i = 0; i < c; i++)
+			{
+				short why = 3;
+				b = b + ret();
+
+				for (int j = 0; j + 3 > 1; j--)
+				{
+					;;;;;;;;;;;;;;;
+					(3) - (2) + (1);
+					{{{{{
+						for(int k = 5; (a) - (s) + 3 >= 22 - 55; s++) ;
+					}}}}}
+				}
+				a = a + 0x10;
+			}
+			;
+		}
+
+		short why = 3;
+		b = b + ret();
+
+		for (int j = 0; j + 3 > 1; j--)
+		{
+			;;;;;;;;;;;;;;;
+			(3) - (2) + (1);
+			{{{{{
+				for(int k = 5; (a) - (s) + 3 >= 22 - 55; s++) ;
+			}}}}}
+		}
+		a = a + 0x10;
+	}
+	return 0;
+}
