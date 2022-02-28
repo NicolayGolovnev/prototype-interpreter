@@ -48,8 +48,10 @@ public:
     static Tree* cur;
     Tree();
     Tree(Tree* l, Tree* r, Tree* up, Node* data);
+    ~Tree();
     void setLeft(Node* data);
     void setRight(Node* data);
+    void setNullableLR(Tree* from);
 
     Tree* findUp(Tree* from, TypeLex id);
     Tree* findUpOnLevel(Tree* from, TypeLex id);
@@ -64,8 +66,7 @@ public:
     Tree* semanticInclude(TypeLex a, OBJECT_TYPE objType, DATA_TYPE dataType);
     void semanticSetInit(Tree* addr, bool flag);
     void semanticSetConst(Tree *addr, bool flag);
-    void semanticSetStruct(Tree *addr, Tree *data);
-    void semanticSetData(Tree *addr, char* data);
+    void semanticSetStruct(Tree* &addr, Tree* data);
 
     int isStruct(Tree* addr, TypeLex a);
     void checkInit(TypeLex a);
@@ -84,6 +85,9 @@ public:
 
     Tree* compoundOperator();
 
+    void semanticSetData(Tree* a, DATA_TYPE dt, char* data);
+    Tree* copyTree(Tree* from, Tree* up);
+    Tree* deleteCompound(Tree* compoundOperator);
 };
 
 #endif //ANALYZATOR_SEMANTIC_H

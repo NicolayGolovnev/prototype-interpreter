@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
 
     Scaner* scaner;
     if (argc <= 1)
-        scaner = new Scaner(const_cast<char*>("TestsSemantic/test4.txt"));
+        scaner = new Scaner(const_cast<char*>("test.txt"));
     else
         scaner = new Scaner(argv[1]);
     Diagram* diagram = new Diagram(scaner);
@@ -32,7 +32,7 @@ int main(int argc, char* argv[]) {
     int type; TypeLex lex;
     type = scaner->scan(lex);
     if (type == TypeEnd)
-        printf("Syntax errors not found!\n");
+        printf("\nSyntax errors not found!\n");
     else
         scaner->printError(const_cast<char*>("Trash text in program ending"), const_cast<char*>(""), -1, -1);
     root->print();

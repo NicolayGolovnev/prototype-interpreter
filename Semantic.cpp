@@ -59,14 +59,37 @@ Tree *Tree::findUpOnLevel(Tree *from, TypeLex id) {
 void Tree::print() {
     std::string nType = types[node->dataType];
 
-    printf("Node with data %s [type %s] ----->", this->node->id, nType.c_str());
+    printf("Node with data %s [type %s", this->node->id, nType.c_str());
+    if (this->node->init) {
+        if (this->node->dataType == TYPE_INTEGER || this->node->dataType == TYPE_SHORT || this->node->dataType == TYPE_LONG)
+            printf(", value: %d", this->node->dataValue.vInt);
+        else if (this->node->dataType == TYPE_DOUBLE)
+            printf(", value: %f", this->node->dataValue.vDouble);
+    }
+    printf("] ----->");
     if (this->left != nullptr) {
         std::string lType = types[left->node->dataType];
-        printf(" left child %s [type %s]", this->left->node->id, lType.c_str());
+        printf(" left child %s [type %s", this->left->node->id, lType.c_str());
+        if (this->left->node->init) {
+            if (this->left->node->dataType == TYPE_INTEGER || this->left->node->dataType == TYPE_SHORT
+                || this->left->node->dataType == TYPE_LONG)
+                printf(", value: %d", this->left->node->dataValue.vInt);
+            else if (this->left->node->dataType == TYPE_DOUBLE)
+                printf(", value: %f", this->left->node->dataValue.vDouble);
+        }
+        printf("]");
     }
     if (this->right != nullptr){
         std::string rType = types[right->node->dataType];
-        printf(" right child %s [type %s]", this->right->node->id, rType.c_str());
+        printf(" right child %s [type %s", this->right->node->id, rType.c_str());
+        if (this->right->node->init) {
+            if (this->right->node->dataType == TYPE_INTEGER || this->right->node->dataType == TYPE_SHORT
+                || this->right->node->dataType == TYPE_LONG)
+                printf(", value: %d", this->right->node->dataValue.vInt);
+            else if (this->right->node->dataType == TYPE_DOUBLE)
+                printf(", value: %f", this->right->node->dataValue.vDouble);
+        }
+        printf("]");
     }
     printf("\n");
     if (this->left != nullptr) this->left->print();
@@ -130,10 +153,10 @@ void Tree::semanticSetConst(Tree *addr, bool flag) {
     addr->node->isConst = flag;
 }
 
-void Tree::semanticSetStruct(Tree *addr, Tree *data) {
+void Tree::semanticSetStruct(Tree* &addr, Tree* data) {
     if (addr->node->objectType == TYPE_VAR)
         addr->node->objectType = TYPE_STRUCT;
-    addr->node->dataStruct = data;
+    addr->node->dataStruct = copyTree(data, addr);
 }
 
 int Tree::isStruct(Tree* addr, TypeLex a) {
@@ -268,3 +291,44 @@ Tree *Tree::compoundOperator() {
     cur = cur->right;
     return v;
 }
+
+void Tree::semanticSetData(Tree* a, DATA_TYPE dt, char* data) {
+    if (dt == TYPE_LONG || dt == TYPE_SHORT || dt == TYPE_INTEGER)
+        a->node->dataValue.vInt = atoi(data);
+//        memcpy(&a->node->dataValue.vInt, data, strlen(data) + 1);
+    else if (dt == DATA_TYPE::TYPE_DOUBLE)
+        a->node->dataValue.vDouble = atof(data);
+//        memcpy(&a->node->dataValue.vDouble, data, strlen(data) + 1);
+
+}
+
+Tree* Tree::copyTree(Tree* from, Tree* up) {
+    Tree* newTree = nullptr;
+    if (from != nullptr) {
+        newTree = new Tree(nullptr, nullptr, up, from->node);
+        if (from->right)
+            newTree->right = copyTree(from->right, newTree);
+        if (from->left)
+            newTree->left = copyTree(from->left, newTree);
+    }
+    return newTree;
+}
+
+Tree::~Tree() {
+    //удаляем ноду + левого и правого
+    delete left;
+    delete right;
+    delete node;
+}
+
+Tree* Tree::deleteCompound(Tree* compoundOperator) {
+    Tree* buf = compoundOperator->up;
+    //так как деструктор может удалить объект когда захочет
+    // - принудительно затираем связи и отправляем это в утиль на очередь
+    buf->left = nullptr;
+    buf->right = nullptr;
+    delete compoundOperator;
+    setCur(buf);
+    return buf;
+}
+

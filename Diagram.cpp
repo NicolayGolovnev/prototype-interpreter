@@ -2,6 +2,7 @@
 // Created by kolya on 10/21/2021.
 //
 
+#include <iostream>
 #include "Diagram.h"
 #include "defs.h"
 
@@ -49,6 +50,7 @@ void Diagram::program() {
     if (type != TypeEnd)
         scaner->printError(const_cast<char *>("Expected keywords \'struct\', \'main\' or data descriptions"),
                 lex, scaner->getLine(), scaner->getPos() - scaner->getNewLinePos());
+    //TODO удаление всего синтаксического дерева
 }
 
 DATA_TYPE Diagram::typeType() {
@@ -121,6 +123,7 @@ void Diagram::typeMain() {
         scaner->printError(const_cast<char *>("Expected keyword \'main\'"),
                 lex, scaner->getLine(), scaner->getPos() - scaner->getNewLinePos());
     Tree* v = root->semanticInclude(lex, OBJECT_TYPE::TYPE_FUNC, DATA_TYPE::TYPE_INTEGER);
+    root->semanticSetInit(v, false);
 
     type = scaner->scan(lex);
     if (type != TypeLeftRB)
@@ -225,7 +228,7 @@ void Diagram::typeConstList() {
         root->semanticSetConst(v, true);
         root->semanticSetInit(v, true);
         root->semanticTypeCastCheck(ident, lex);
-        //root->semanticSetData(v, (char *)&lex);
+        root->semanticSetData(v, dataType, (char *)&lex);
         if ((type = lookForward(1)) == TypeComma)
             scaner->scan(lex);
     } while (type == TypeComma);
@@ -257,7 +260,7 @@ void Diagram::typeVarList() {
                 scaner->printError(const_cast<char *>("Expected constant"),
                                    lex, scaner->getLine(), scaner->getPos() - scaner->getNewLinePos());
             root->semanticSetInit(v, true);
-            root->semanticSetData(v, nullptr);
+            root->semanticSetData(v, dataType, (char *)&lex);
             root->semanticTypeCastCheck(ident, lex);
         }
         else {
@@ -266,7 +269,6 @@ void Diagram::typeVarList() {
                     lex, scaner->getLine(), scaner->getPos() - scaner->getNewLinePos());
             Tree* v = root->semanticInclude(lex, OBJECT_TYPE::TYPE_VAR, dataType);
 
-            root->semanticSetData(v, nullptr);
             root->semanticSetInit(v, false);
             if (dataType == TYPE_DATASTRUCT) {
                 root->semanticSetStruct(v, root->semanticGetStructData(structIdent));
@@ -296,6 +298,7 @@ void Diagram::typeOperator() {
 
 void Diagram::typeCompoundOperator() {
     int type = scaner->scan(lex);
+    Tree* forReturn = Tree::cur;
     Tree* v = root->compoundOperator();
     do {
         type = lookForward(1);
@@ -312,7 +315,14 @@ void Diagram::typeCompoundOperator() {
         type = lookForward(1);
     } while (type != TypeRightFB);
     scaner->scan(lex);
-    root->setCur(v);
+    //печать синтаксического дерева до его удаления
+    std::cout << "\nPrint a compound operator before deleting:" << std::endl;
+    root->print();
+    //удаляем сложный оператор
+    root->deleteCompound(v);
+    std::cout << "\nPrint a tree after deleting compound operator:" << std::endl;
+    root->print();
+//    root->setCur(forReturn);
 }
 
 void Diagram::typeAssign() {
