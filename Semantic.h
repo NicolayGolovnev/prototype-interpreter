@@ -39,6 +39,14 @@ struct Node {
     Tree* dataStruct = nullptr;           // Ссылка на объекты структуры
 };
 
+struct ExpresData {
+    DATA_TYPE dataType;
+    union {
+        int vInt;
+        double vDouble;
+    } dataValue;
+};
+
 class Tree {
 private:
     Node* node;
@@ -85,9 +93,15 @@ public:
 
     Tree* compoundOperator();
 
+    //#2
     void semanticSetData(Tree* a, DATA_TYPE dt, char* data);
     Tree* copyTree(Tree* from, Tree* up);
     Tree* deleteCompound(Tree* compoundOperator);
+
+    //#3
+    void semanticSetValue(Tree* a, ExpresData* data);
+    void semanticGetData(Tree* a, ExpresData* data);
+    void semanticGetStringValue(TypeLex value, ExpresData* data);
 };
 
 #endif //ANALYZATOR_SEMANTIC_H

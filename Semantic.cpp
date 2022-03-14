@@ -332,3 +332,60 @@ Tree* Tree::deleteCompound(Tree* compoundOperator) {
     return buf;
 }
 
+void Tree::semanticSetValue(Tree *a, ExpresData* data) {
+    if (data->dataType == TYPE_LONG || data->dataType == TYPE_SHORT || data->dataType == TYPE_INTEGER)
+        data->dataType = TYPE_INTEGER;
+    else if (data->dataType == TYPE_DOUBLE)
+        data->dataType = TYPE_DOUBLE;
+
+    switch (data->dataType) {
+        case TYPE_INTEGER:
+            switch (a->node->dataType) {
+                case TYPE_INTEGER:
+                    a->node->dataValue.vInt = data->dataValue.vInt;
+                    break;
+                case TYPE_DOUBLE:
+                    a->node->dataValue.vDouble = data->dataValue.vInt;
+                    break;
+                default:
+                    break;
+            }
+            break;
+
+        case TYPE_DOUBLE: {
+            switch (a->node->dataType) {
+                case TYPE_INTEGER:
+                    a->node->dataValue.vInt = data->dataValue.vDouble;
+                    break;
+                case TYPE_DOUBLE:
+                    a->node->dataValue.vDouble = data->dataValue.vDouble;
+                    break;
+                default:
+                    break;
+            }
+        }
+        default:
+            break;
+    }
+}
+
+void Tree::semanticGetData(Tree* a, ExpresData* data) {
+    data->dataType = a->node->dataType;
+    if (data->dataType == TYPE_DOUBLE)
+        data->dataValue.vDouble = a->node->dataValue.vDouble;
+    else
+        data->dataValue.vInt = a->node->dataValue.vInt;
+}
+
+void Tree::semanticGetStringValue(TypeLex value, ExpresData* data) {
+    double val = atof(value);
+    if (isInt(val)) {
+        data->dataValue.vInt = (int) val;
+        data->dataType = TYPE_INTEGER;
+    }
+    else {
+        data->dataValue.vDouble = val;
+        data->dataType = TYPE_DOUBLE;
+    }
+}
+

@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
 
     Scaner* scaner;
     if (argc <= 1)
-        scaner = new Scaner(const_cast<char*>("test.txt"));
+        scaner = new Scaner(const_cast<char*>("test3.txt"));
     else
         scaner = new Scaner(argv[1]);
     Diagram* diagram = new Diagram(scaner);

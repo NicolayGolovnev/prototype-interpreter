@@ -26,13 +26,13 @@ private:
     void typeCompoundOperator();
     void typeAssign();
     void typeFor();
-    DATA_TYPE typeExpression();
-    DATA_TYPE typeXorEl();
-    DATA_TYPE typeAndEl();
-    DATA_TYPE typeComparesEl();
-    DATA_TYPE typeSummEl();
-    DATA_TYPE typeMultEl();
-    DATA_TYPE typeElemExpression();
+    void typeExpression(ExpresData* ed);
+    void typeXorEl(ExpresData* ed);
+    void typeAndEl(ExpresData* ed);
+    void typeComparesEl(ExpresData* ed);
+    void typeSummEl(ExpresData* ed);
+    void typeMultEl(ExpresData* ed);
+    void typeElemExpression(ExpresData* ed);
 
 public:
     Tree* root;

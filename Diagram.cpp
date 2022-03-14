@@ -342,7 +342,7 @@ void Diagram::typeAssign() {
     while (type == TypeDot) {
         if (flag) {
             flag = false;
-            if (root->isStruct(root->cur, ident))
+            if (root->isStruct(Tree::cur, ident))
                 root->printError("Found description of the structure (not object)", ident);
             v = root->semanticGetStructData(ident);
         }
@@ -374,8 +374,11 @@ void Diagram::typeAssign() {
         scaner->printError(const_cast<char*>("Expected symbol ="),
                 lex, scaner->getLine(), scaner->getPos() - scaner->getNewLinePos());
 
-    DATA_TYPE dt1 = typeExpression();
-    root->semanticTypeCastCheck(dt, dt1);
+    ExpresData* ed = new ExpresData();
+    typeExpression(ed);
+
+    root->semanticTypeCastCheck(dt, ed->dataType);
+    root->semanticSetValue(v, ed);
 }
 
 void Diagram::typeFor() {
@@ -403,15 +406,15 @@ void Diagram::typeFor() {
     if (type != TypeAssign)
         scaner->printError(const_cast<char*>("Expected symbol ="),
                            lex, scaner->getLine(), scaner->getPos() - scaner->getNewLinePos());
-
-    typeExpression();
+    ExpresData* data = new ExpresData();
+    typeExpression(data);
 
     type = scaner->scan(lex);
     if (type != TypeEndComma)
         scaner->printError(const_cast<char*>("Expected symbol ;"),
                            lex, scaner->getLine(), scaner->getPos() - scaner->getNewLinePos());
-
-    typeExpression();
+    ExpresData* expr = new ExpresData();
+    typeExpression(expr);
 
     type = scaner->scan(lex);
     if (type != TypeEndComma)
@@ -428,107 +431,102 @@ void Diagram::typeFor() {
     typeOperator();
 }
 
-DATA_TYPE Diagram::typeExpression() {
-    DATA_TYPE dt = typeXorEl();
+void Diagram::typeExpression(ExpresData* ed) {
+    typeXorEl(ed);
 
     int type = lookForward(1);
     while (type == TypeBitOr) {
         scaner->scan(lex);
-        DATA_TYPE dt1 = typeXorEl();
-        dt = max(dt1, dt);
+        ExpresData* cmpData = new ExpresData();
+        typeXorEl(cmpData);
+        // сделать сравнение - что больше будет
+//        dt = max(dt1, dt);
         type = lookForward(1);
     }
-
-    return dt;
 }
 
-DATA_TYPE Diagram::typeXorEl() {
-    DATA_TYPE dt = typeAndEl();
+void Diagram::typeXorEl(ExpresData* ed) {
+    typeAndEl(ed);
 
     int type = lookForward(1);
     while (type == TypeBitXor) {
         scaner->scan(lex);
-        DATA_TYPE dt1 = typeAndEl();
-        dt = max(dt1, dt);
+        ExpresData* cmpData = new ExpresData();
+        typeAndEl(cmpData);
+//        dt = max(dt1, dt);
         type = lookForward(1);
     }
-
-    return dt;
 }
 
-DATA_TYPE Diagram::typeAndEl() {
-    DATA_TYPE dt = typeComparesEl();
+void Diagram::typeAndEl(ExpresData* ed) {
+    typeComparesEl(ed);
 
     int type = lookForward(1);
     while (type == TypeBitAnd) {
         scaner->scan(lex);
-        DATA_TYPE dt1 = typeComparesEl();
-        dt = max(dt1, dt);
+        ExpresData* cmpData = new ExpresData();
+        typeComparesEl(cmpData);
+//        dt = max(dt1, dt);
         type = lookForward(1);
     }
-
-    return dt;
 }
 
-DATA_TYPE Diagram::typeComparesEl() {
-    DATA_TYPE dt = typeSummEl();
+void Diagram::typeComparesEl(ExpresData* ed) {
+    typeSummEl(ed);
 
     int type = lookForward(1);
     while (isCompare(type)) {
         scaner->scan(lex);
-        DATA_TYPE dt1 = typeSummEl();
-        dt = max(dt1, dt);
+        ExpresData* cmpData = new ExpresData();
+        typeSummEl(cmpData);
+//        dt = max(dt1, dt);
         type = lookForward(1);
     }
-
-    return dt;
 }
 
-DATA_TYPE Diagram::typeSummEl() {
-    DATA_TYPE dt = typeMultEl();
+void Diagram::typeSummEl(ExpresData* ed) {
+    typeMultEl(ed);
 
     int type = lookForward(1);
     while ((type == TypeAdd) || (type == TypeSub)) {
         scaner->scan(lex);
-        DATA_TYPE dt1 = typeMultEl();
-        dt = max(dt1, dt);
+        ExpresData* cmpData = new ExpresData();
+        typeMultEl(cmpData);
+//        dt = max(dt1, dt);
         type = lookForward(1);
     }
-
-    return dt;
 }
 
-DATA_TYPE Diagram::typeMultEl() {
-    DATA_TYPE dt = typeElemExpression();
+void Diagram::typeMultEl(ExpresData* ed) {
+    typeElemExpression(ed);
 
     int type = lookForward(1);
     while ((type == TypeMul) || (type == TypeDiv) || (type == TypeDivPart)) {
         scaner->scan(lex);
-        DATA_TYPE dt1 = typeElemExpression();
-        dt = max(dt1, dt);
+        ExpresData* cmpData = new ExpresData();
+        typeElemExpression(cmpData);
+//        dt = max(dt1, dt);
         type = lookForward(1);
     }
-
-    return dt;
 }
 
-DATA_TYPE Diagram::typeElemExpression() {
-    DATA_TYPE dt;
+void Diagram::typeElemExpression(ExpresData* ed) {
     auto copyLex = lex;
 
     int type = lookForward(1);
     if (type == TypeLeftRB) {
         scaner->scan(lex);
-        dt = typeExpression();
+        typeExpression(ed);
         type = scaner->scan(lex);
         if (type != TypeRightRB)
             scaner->printError(const_cast<char*>("Expected symbol )"),
                     lex, scaner->getLine(), scaner->getPos() - scaner->getNewLinePos());
-        return dt;
+        return ;
     }
     else if (isConst(type)) {
         scaner->scan(lex);
-        return root->getType(lex);
+        root->semanticGetStringValue(lex, ed);
+        return ;
     }
     else if (type == TypeIdent) {
         int type;
@@ -562,13 +560,13 @@ DATA_TYPE Diagram::typeElemExpression() {
         }
         if (v != nullptr){
             root->checkInit(v);
-            return root->getType(v);
+            root->semanticGetData(v, ed);
         }
         else{
             root->checkInit(ident);
-            return root->getType(ident);
+            root->semanticGetData(root->semanticGetVar(ident), ed);
         }
-
+        return ;
     }
     else
         scaner->printError(const_cast<char*>("Expected expression, constant or identifier"),
