@@ -20,6 +20,11 @@ enum OBJECT_TYPE {
     TYPE_UNDEFINED = 0, TYPE_VAR, TYPE_STRUCT, TYPE_FUNC
 };
 
+union DataValue {
+    int vInt;
+    double vDouble;
+};
+
 class Tree;
 // Структура для хранения в таблице идентификаторов
 struct Node {
@@ -27,10 +32,7 @@ struct Node {
     TypeLex id;                 // идентификатор
     DATA_TYPE dataType;         // тип значения - short, int, long, double, объект структуры
 
-    union {
-        int vInt;
-        double vDouble;
-    } dataValue;
+    DataValue dataValue;
 
     //для переменной
     bool isConst;               // Флаг константы
@@ -41,10 +43,7 @@ struct Node {
 
 struct ExpresData {
     DATA_TYPE dataType;
-    union {
-        int vInt;
-        double vDouble;
-    } dataValue;
+    DataValue dataValue;
 };
 
 class Tree {
@@ -102,6 +101,10 @@ public:
     void semanticSetValue(Tree* a, ExpresData* data);
     void semanticGetData(Tree* a, ExpresData* data);
     void semanticGetStringValue(TypeLex value, ExpresData* data);
+
+    //#4
+    void semanticMakeBiOperation(ExpresData* data1, ExpresData* data2, int type);
+    void printInfo(Tree* a, std::string beforeText);
 };
 
 #endif //ANALYZATOR_SEMANTIC_H

@@ -1,0 +1,30 @@
+struct abc {
+    int a = 33;
+    double b;
+};
+
+int main() {
+
+    abc a; a.b = 10;
+    int b = 5, c = 2;
+
+    int buf1;
+    double buf2;
+
+    buf1 = b | c;
+    buf1 = b ^ c;
+    buf1 = b & c;
+
+    buf1 = b == c;
+    buf1 = b != c;
+
+    buf1 = b + c;
+    buf2 = a.b - b;
+    buf1 = b * c;
+    buf2 = a.b * c;
+    buf1 = b / c;
+    buf2 = a.b / c / 2;
+    buf1 = b % c;
+
+    return 1;
+}

@@ -369,6 +369,8 @@ void Diagram::typeAssign() {
         root->semanticSetInit(v, true);
         dt = root->getType(ident);
     }
+    // вывод значения до присваивания
+//    root->printInfo(v, "Before assign: ");
 
     if (type != TypeAssign)
         scaner->printError(const_cast<char*>("Expected symbol ="),
@@ -379,6 +381,8 @@ void Diagram::typeAssign() {
 
     root->semanticTypeCastCheck(dt, ed->dataType);
     root->semanticSetValue(v, ed);
+    root->printInfo(v, "After assign: ");
+//    printf("\n");
 }
 
 void Diagram::typeFor() {
@@ -439,8 +443,8 @@ void Diagram::typeExpression(ExpresData* ed) {
         scaner->scan(lex);
         ExpresData* cmpData = new ExpresData();
         typeXorEl(cmpData);
-        // сделать сравнение - что больше будет
-//        dt = max(dt1, dt);
+
+        root->semanticMakeBiOperation(ed, cmpData, type);
         type = lookForward(1);
     }
 }
@@ -453,7 +457,7 @@ void Diagram::typeXorEl(ExpresData* ed) {
         scaner->scan(lex);
         ExpresData* cmpData = new ExpresData();
         typeAndEl(cmpData);
-//        dt = max(dt1, dt);
+        root->semanticMakeBiOperation(ed, cmpData, type);
         type = lookForward(1);
     }
 }
@@ -466,7 +470,7 @@ void Diagram::typeAndEl(ExpresData* ed) {
         scaner->scan(lex);
         ExpresData* cmpData = new ExpresData();
         typeComparesEl(cmpData);
-//        dt = max(dt1, dt);
+        root->semanticMakeBiOperation(ed, cmpData, type);
         type = lookForward(1);
     }
 }
@@ -479,7 +483,7 @@ void Diagram::typeComparesEl(ExpresData* ed) {
         scaner->scan(lex);
         ExpresData* cmpData = new ExpresData();
         typeSummEl(cmpData);
-//        dt = max(dt1, dt);
+        root->semanticMakeBiOperation(ed, cmpData, type);
         type = lookForward(1);
     }
 }
@@ -492,7 +496,7 @@ void Diagram::typeSummEl(ExpresData* ed) {
         scaner->scan(lex);
         ExpresData* cmpData = new ExpresData();
         typeMultEl(cmpData);
-//        dt = max(dt1, dt);
+        root->semanticMakeBiOperation(ed, cmpData, type);
         type = lookForward(1);
     }
 }
@@ -505,7 +509,7 @@ void Diagram::typeMultEl(ExpresData* ed) {
         scaner->scan(lex);
         ExpresData* cmpData = new ExpresData();
         typeElemExpression(cmpData);
-//        dt = max(dt1, dt);
+        root->semanticMakeBiOperation(ed, cmpData, type);
         type = lookForward(1);
     }
 }
