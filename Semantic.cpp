@@ -32,18 +32,27 @@ Tree::Tree(Tree *l, Tree *r, Tree *up, Node *data) {
 
 // Создание левого потомка от текущей вершины
 void Tree::setLeft(Node *data) {
+    if (!flagInterpret)
+        return ;
+
     Tree *a = new Tree(nullptr, nullptr, this, data);
     this->left = a;
 }
 
 // Создание правого потомка от текущей вершины
 void Tree::setRight(Node *data) {
+    if (!flagInterpret)
+        return ;
+
     Tree *a = new Tree(nullptr, nullptr, this, data);
     this->right = a;
 }
 
 // Поиск данных в дереве от заданной вершины from до корня вверх по связям
 Tree *Tree::findUp(Tree *from, TypeLex id) {
+    if (!flagInterpret)
+        return (Tree*) nullptr;
+
     Tree *i = from; // Текущая вершина поиска
     while ((i != nullptr) && (memcmp(id, i->node->id, max(strlen(i->node->id), strlen(id))) != 0))
         i = i->up; // поднимаемся вверх по связям
@@ -51,6 +60,9 @@ Tree *Tree::findUp(Tree *from, TypeLex id) {
 }
 
 Tree *Tree::findUpOnLevel(Tree *from, TypeLex id) {
+    if (!flagInterpret)
+        return (Tree*) nullptr;
+
     Tree *i = from;
     while ((i->up != nullptr) && (i->up->right != i)) {
         if (memcmp(id, i->node->id, max(strlen(i->node->id), strlen(id))) == 0)
@@ -61,6 +73,9 @@ Tree *Tree::findUpOnLevel(Tree *from, TypeLex id) {
 }
 
 void Tree::print() {
+    if (!flagInterpret)
+        return ;
+
     std::string nType = types[node->dataType];
 
     printf("Node with data %s [type %s", this->node->id, nType.c_str());
@@ -102,24 +117,39 @@ void Tree::print() {
 }
 
 void Tree::printError(std::string error, TypeLex a) {
+    if (!flagInterpret)
+        return ;
+
     printf("Error: %s on line %d, identifier %s", error.c_str(), sc->getLine() + 1, a);
     exit(-440);
 }
 
 int Tree::findDuplicate(Tree *addr, TypeLex a) {
+    if (!flagInterpret)
+        return 0;
+
     if (findUpOnLevel(addr, a) == nullptr) return 0;
     return 1;
 }
 
 void Tree::setCur(Tree *a) {
+    if (!flagInterpret)
+        return ;
+
     Tree::cur = a;
 }
 
 void Tree::setScaner(Scaner *scaner) {
+    if (!flagInterpret)
+        return ;
+
     sc = scaner;
 }
 
 Tree *Tree::semanticInclude(TypeLex a, OBJECT_TYPE objType, DATA_TYPE dataType) {
+    if (!flagInterpret)
+        return (Tree*) nullptr;
+
     if (findDuplicate(cur, a))
         printError("Redescription of an identifier", a);
 
@@ -152,20 +182,32 @@ Tree *Tree::semanticInclude(TypeLex a, OBJECT_TYPE objType, DATA_TYPE dataType) 
 }
 
 void Tree::semanticSetInit(Tree *addr, bool flag) {
+    if (!flagInterpret)
+        return ;
+
     addr->node->init = flag;
 }
 
 void Tree::semanticSetConst(Tree *addr, bool flag) {
+    if (!flagInterpret)
+        return ;
+
     addr->node->isConst = flag;
 }
 
 void Tree::semanticSetStruct(Tree *&addr, Tree *data) {
+    if (!flagInterpret)
+        return ;
+
     if (addr->node->objectType == TYPE_VAR)
         addr->node->objectType = TYPE_STRUCT;
     addr->node->dataStruct = copyTree(data, addr);
 }
 
 int Tree::isStruct(Tree *addr, TypeLex a) {
+    if (!flagInterpret)
+        return 0;
+
     Tree *v = findUp(addr, a);
     if (v == nullptr) {
         printError("Identifier-struct is not exist", a);
@@ -179,26 +221,41 @@ int Tree::isStruct(Tree *addr, TypeLex a) {
 }
 
 void Tree::checkInit(TypeLex a) {
+    if (!flagInterpret)
+        return ;
+
     Tree *v = semanticGetVar(a);
     checkInit(v);
 }
 
 void Tree::checkInit(Tree *a) {
+    if (!flagInterpret)
+        return ;
+
     if (!a->node->init)
         printError("Used uninitialized variable", a->node->id);
 }
 
 void Tree::checkConst(TypeLex a) {
+    if (!flagInterpret)
+        return ;
+
     Tree *v = semanticGetVar(a);
     checkConst(v);
 }
 
 void Tree::checkConst(Tree *a) {
+    if (!flagInterpret)
+        return ;
+
     if (a->node->isConst)
         printError("Cannot change constant", a->node->id);
 }
 
 void Tree::semanticTypeCastCheck(TypeLex a, TypeLex b) {
+    if (!flagInterpret)
+        return ;
+
     Tree *v = semanticGetVar(a);
     DATA_TYPE constDataType = getType(b);
 
@@ -210,6 +267,9 @@ void Tree::semanticTypeCastCheck(TypeLex a, TypeLex b) {
 }
 
 void Tree::semanticTypeCastCheck(DATA_TYPE a, DATA_TYPE b) {
+    if (!flagInterpret)
+        return ;
+
     if ((a == DATA_TYPE::TYPE_DATASTRUCT && a > b) || (b == DATA_TYPE::TYPE_DATASTRUCT && b > a)) {
         printf("Semantic error, line %d: Impossible casting in type %s, expected %s", sc->getLine() + 1,
                types[b].c_str(), types[a].c_str());
@@ -222,6 +282,9 @@ void Tree::semanticTypeCastCheck(DATA_TYPE a, DATA_TYPE b) {
 }
 
 Tree *Tree::semanticGetVar(TypeLex a) {
+    if (!flagInterpret)
+        return (Tree*) nullptr;
+
     Tree *v = findUp(cur, a);
     if (v == nullptr)
         printError("Identifier description missing", a);
@@ -229,6 +292,9 @@ Tree *Tree::semanticGetVar(TypeLex a) {
 }
 
 Tree *Tree::semanticGetStructData(TypeLex a) {
+    if (!flagInterpret)
+        return (Tree*) nullptr;
+
     Tree *v = findUp(cur, a);
     if (v == nullptr)
         printError("Structure description missing", a);
@@ -242,10 +308,16 @@ Tree *Tree::semanticGetStructData(TypeLex a) {
 }
 
 Tree *Tree::semanticGetStructData(Tree *a) {
+    if (!flagInterpret)
+        return (Tree*) nullptr;
+
     return a->node->dataStruct;
 }
 
 Tree *Tree::semanticGetIdentifierInStruct(Tree *from, TypeLex a) {
+    if (!flagInterpret)
+        return (Tree*) nullptr;
+
     Tree *i = from; // Текущая вершина поиска
     while ((i != nullptr) && (memcmp(a, i->node->id, max(strlen(i->node->id), strlen(a))) != 0))
         i = i->left; // ищем дальше по левой ветке
@@ -253,6 +325,9 @@ Tree *Tree::semanticGetIdentifierInStruct(Tree *from, TypeLex a) {
 }
 
 DATA_TYPE Tree::getType(TypeLex a) {
+    if (!flagInterpret)
+        return (DATA_TYPE) 0;
+
     Tree *v;
     v = findUp(cur, a);
     if (v != nullptr)
@@ -276,10 +351,16 @@ DATA_TYPE Tree::getType(TypeLex a) {
 }
 
 DATA_TYPE Tree::getType(Tree *a) {
+    if (!flagInterpret)
+        return (DATA_TYPE) 0;
+
     return a->node->dataType;
 }
 
 Tree *Tree::compoundOperator() {
+    if (!flagInterpret)
+        return (Tree*) nullptr;
+
     Tree *v;
     Node b;
 
@@ -298,6 +379,9 @@ Tree *Tree::compoundOperator() {
 }
 
 void Tree::semanticSetData(Tree *a, DATA_TYPE dt, char *data) {
+    if (!flagInterpret)
+        return ;
+
     if (dt == TYPE_LONG || dt == TYPE_SHORT || dt == TYPE_INTEGER)
         a->node->dataValue.vInt = atoi(data);
 //        memcpy(&a->node->dataValue.vInt, data, strlen(data) + 1);
@@ -308,6 +392,9 @@ void Tree::semanticSetData(Tree *a, DATA_TYPE dt, char *data) {
 }
 
 Tree *Tree::copyTree(Tree *from, Tree *up) {
+    if (!flagInterpret)
+        return (Tree*) nullptr;
+
     Tree *newTree = nullptr;
     if (from != nullptr) {
         newTree = new Tree(nullptr, nullptr, up, from->node);
@@ -326,18 +413,24 @@ Tree::~Tree() {
     delete node;
 }
 
-Tree *Tree::deleteCompound(Tree *compoundOperator) {
-    Tree *buf = compoundOperator->up;
+Tree *Tree::deleteTreeFrom(Tree *a) {
+    if (!flagInterpret)
+        return (Tree*) nullptr;
+
+    Tree *buf = a->up;
     //так как деструктор может удалить объект когда захочет
     // - принудительно затираем связи и отправляем это в утиль на очередь
     buf->left = nullptr;
     buf->right = nullptr;
-    delete compoundOperator;
+    delete a;
     setCur(buf);
     return buf;
 }
 
 void Tree::semanticSetValue(Tree *a, ExpresData *data) {
+    if (!flagInterpret)
+        return ;
+
     if (data->dataType == TYPE_LONG || data->dataType == TYPE_SHORT || data->dataType == TYPE_INTEGER)
         data->dataType = TYPE_INTEGER;
     else if (data->dataType == TYPE_DOUBLE)
@@ -375,11 +468,17 @@ void Tree::semanticSetValue(Tree *a, ExpresData *data) {
 }
 
 void Tree::semanticGetData(Tree *a, ExpresData *data) {
+    if (!flagInterpret)
+        return ;
+
     data->dataType = a->node->dataType;
     data->dataValue = a->node->dataValue;
 }
 
 void Tree::semanticGetStringValue(TypeLex value, ExpresData *data) {
+    if (!flagInterpret)
+        return ;
+
     double val = atof(value);
     if (isInt(val)) {
         data->dataValue.vInt = (int) val;
@@ -391,6 +490,9 @@ void Tree::semanticGetStringValue(TypeLex value, ExpresData *data) {
 }
 
 void Tree::semanticMakeBiOperation(ExpresData *data1, ExpresData *data2, int type) {
+    if (!flagInterpret)
+        return ;
+
     DATA_TYPE maxType = max(data1->dataType, data2->dataType);
     DataValue value1, value2;
 
@@ -661,6 +763,9 @@ void Tree::semanticMakeBiOperation(ExpresData *data1, ExpresData *data2, int typ
 }
 
 void Tree::printInfo(Tree* a, std::string beforeText) {
+    if (!flagInterpret)
+        return ;
+
     printf("%s", beforeText.c_str());
     if (a->node->dataType == TYPE_SHORT || a->node->dataType == TYPE_INTEGER || a->node->dataType == TYPE_LONG)
         printf("var \'%s\', value: %d\n", a->node->id, a->node->dataValue.vInt);

@@ -95,7 +95,7 @@ public:
     //#2
     void semanticSetData(Tree* a, DATA_TYPE dt, char* data);
     Tree* copyTree(Tree* from, Tree* up);
-    Tree* deleteCompound(Tree* compoundOperator);
+    Tree* deleteTreeFrom(Tree* a);
 
     //#3
     void semanticSetValue(Tree* a, ExpresData* data);
@@ -105,6 +105,10 @@ public:
     //#4
     void semanticMakeBiOperation(ExpresData* data1, ExpresData* data2, int type);
     void printInfo(Tree* a, std::string beforeText);
+
+    //#5-6
+    static bool flagInterpret;
+
 };
 
 #endif //ANALYZATOR_SEMANTIC_H

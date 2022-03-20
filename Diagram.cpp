@@ -298,7 +298,7 @@ void Diagram::typeOperator() {
 
 void Diagram::typeCompoundOperator() {
     int type = scaner->scan(lex);
-    Tree* forReturn = Tree::cur;
+//    Tree* forReturn = Tree::cur;
     Tree* v = root->compoundOperator();
     do {
         type = lookForward(1);
@@ -319,7 +319,7 @@ void Diagram::typeCompoundOperator() {
     std::cout << "\nPrint a compound operator before deleting:" << std::endl;
     root->print();
     //удаляем сложный оператор
-    root->deleteCompound(v);
+    root->deleteTreeFrom(v);
     std::cout << "\nPrint a tree after deleting compound operator:" << std::endl;
     root->print();
 //    root->setCur(forReturn);
@@ -387,6 +387,7 @@ void Diagram::typeAssign() {
 
 void Diagram::typeFor() {
     int type = scaner->scan(lex);
+
     if (type != TypeFor)
         scaner->printError(const_cast<char*>("Expected keyword \'for\'"),
                 lex, scaner->getLine(), scaner->getPos() - scaner->getNewLinePos());
@@ -406,20 +407,24 @@ void Diagram::typeFor() {
         scaner->printError(const_cast<char*>("Expected identifier"),
                            lex, scaner->getLine(), scaner->getPos() - scaner->getNewLinePos());
 
+    Tree* iVar = root->semanticInclude(lex, OBJECT_TYPE::TYPE_VAR, DATA_TYPE::TYPE_INTEGER);
+
     type = scaner->scan(lex);
     if (type != TypeAssign)
         scaner->printError(const_cast<char*>("Expected symbol ="),
                            lex, scaner->getLine(), scaner->getPos() - scaner->getNewLinePos());
     ExpresData* data = new ExpresData();
     typeExpression(data);
-
+    // занести данные  в переменную i
+    root->semanticSetInit(iVar, true);
+    root->semanticSetValue(iVar, data);
     type = scaner->scan(lex);
     if (type != TypeEndComma)
         scaner->printError(const_cast<char*>("Expected symbol ;"),
                            lex, scaner->getLine(), scaner->getPos() - scaner->getNewLinePos());
+
     ExpresData* expr = new ExpresData();
     typeExpression(expr);
-
     type = scaner->scan(lex);
     if (type != TypeEndComma)
         scaner->printError(const_cast<char*>("Expected symbol ;"),
@@ -433,6 +438,8 @@ void Diagram::typeFor() {
                            lex, scaner->getLine(), scaner->getPos() - scaner->getNewLinePos());
 
     typeOperator();
+
+    root->deleteTreeFrom(iVar);
 }
 
 void Diagram::typeExpression(ExpresData* ed) {
