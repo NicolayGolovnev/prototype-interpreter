@@ -386,6 +386,9 @@ void Diagram::typeAssign() {
 }
 
 void Diagram::typeFor() {
+    bool localInterpret = Tree::flagInterpret;
+    bool inCycle = false;
+
     int type = scaner->scan(lex);
 
     if (type != TypeFor)
@@ -423,21 +426,46 @@ void Diagram::typeFor() {
         scaner->printError(const_cast<char*>("Expected symbol ;"),
                            lex, scaner->getLine(), scaner->getPos() - scaner->getNewLinePos());
 
+    int ptrV2 = scaner->getPos();
+V2:
     ExpresData* expr = new ExpresData();
     typeExpression(expr);
+    Tree::flagInterpret = Tree::flagInterpret && expr->getResult() != 0;
+
+    bool resultOfInterpret = Tree::flagInterpret;
+    inCycle = false;
+
     type = scaner->scan(lex);
     if (type != TypeEndComma)
         scaner->printError(const_cast<char*>("Expected symbol ;"),
                            lex, scaner->getLine(), scaner->getPos() - scaner->getNewLinePos());
-
+    Tree::flagInterpret = false;
+    int ptrV3 = scaner->getPos();
+V3:
     typeAssign();
-
+    if (inCycle) {
+        scaner->setPos(ptrV2);
+        goto V2;
+    }
+    Tree::flagInterpret = resultOfInterpret;
     type = scaner->scan(lex);
     if (type != TypeRightRB)
         scaner->printError(const_cast<char*>("Expected symbol )"),
                            lex, scaner->getLine(), scaner->getPos() - scaner->getNewLinePos());
-
+OPERATOR:
+//    int ptrOperator = scaner->getPos();
+    // флаг пре-интерпретации необходим, если у нас в функции будет выполнен return - Нужно ли мне ???
+//    bool preInterpretOfOperator = Tree::flagInterpret;
     typeOperator();
+
+//    if (preInterpretOfOperator != Tree::flagInterpret)
+//        localInterpret = false;
+    inCycle = true;
+    if (Tree::flagInterpret) {
+        scaner->setPos(ptrV3);
+        goto V3;
+    }
+    Tree::flagInterpret = localInterpret;
 
     root->deleteTreeFrom(iVar);
 }

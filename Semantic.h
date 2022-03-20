@@ -44,6 +44,13 @@ struct Node {
 struct ExpresData {
     DATA_TYPE dataType;
     DataValue dataValue;
+
+    double getResult() {
+        if (dataType == DATA_TYPE::TYPE_INTEGER)
+            return (double) dataValue.vInt;
+        else
+            return dataValue.vDouble;
+    };
 };
 
 class Tree {

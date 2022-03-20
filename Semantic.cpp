@@ -12,6 +12,7 @@
 
 
 Tree *Tree::cur = (Tree *) nullptr;
+bool Tree::flagInterpret = true;
 std::vector<std::string> types = {"none", "short", "int", "long", "double", "type of struct"};
 
 Tree::Tree() {

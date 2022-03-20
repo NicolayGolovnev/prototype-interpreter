@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
 
     Scaner* scaner;
     if (argc <= 1)
-        scaner = new Scaner(const_cast<char*>("test4.txt"));
+        scaner = new Scaner(const_cast<char*>("test6.txt"));
     else
         scaner = new Scaner(argv[1]);
     Diagram* diagram = new Diagram(scaner);
@@ -24,6 +24,7 @@ int main(int argc, char* argv[]) {
     node.objectType = TYPE_UNDEFINED;
 
     Tree* root = new Tree(nullptr, nullptr, nullptr, &node);
+//    root->flagInterpret = false;
     root->setCur(root);
     diagram->root = root;
     root->setScaner(scaner);
@@ -35,7 +36,7 @@ int main(int argc, char* argv[]) {
         printf("\nSyntax errors not found!\n");
     else
         scaner->printError(const_cast<char*>("Trash text in program ending"), const_cast<char*>(""), -1, -1);
-//    root->print();
+    root->print();
 
     return 0;
 }
