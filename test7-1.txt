@@ -1,0 +1,19 @@
+struct abc {
+    int a = 33;
+    double b = 10;
+};
+
+int main() {
+
+    abc a;
+    int b = 5, bb;
+    double c = 9;
+
+    for (int i = 0; i < b; i = i + 1)
+        bb = i;
+
+    a.a = bb;
+    a.b = c;
+
+    return 1;
+}

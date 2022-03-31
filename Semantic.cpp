@@ -384,10 +384,10 @@ void Tree::semanticSetData(Tree *a, DATA_TYPE dt, char *data) {
         return ;
 
     if (dt == TYPE_LONG || dt == TYPE_SHORT || dt == TYPE_INTEGER)
-        a->node->dataValue.vInt = atoi(data);
+        a->node->dataValue.vInt = (int) strtoul(data, nullptr, 0);
 //        memcpy(&a->node->dataValue.vInt, data, strlen(data) + 1);
     else if (dt == DATA_TYPE::TYPE_DOUBLE)
-        a->node->dataValue.vDouble = atof(data);
+        a->node->dataValue.vDouble = (double) strtoul(data, nullptr, 0);
 //        memcpy(&a->node->dataValue.vDouble, data, strlen(data) + 1);
 
 }
@@ -441,6 +441,8 @@ void Tree::semanticSetValue(Tree *a, ExpresData *data) {
         case TYPE_INTEGER:
             switch (a->node->dataType) {
                 case TYPE_INTEGER:
+                case TYPE_SHORT:
+                case TYPE_LONG:
                     a->node->dataValue.vInt = data->dataValue.vInt;
                     break;
                 case TYPE_DOUBLE:
@@ -476,11 +478,11 @@ void Tree::semanticGetData(Tree *a, ExpresData *data) {
     data->dataValue = a->node->dataValue;
 }
 
-void Tree::semanticGetStringValue(TypeLex value, ExpresData *data) {
+void Tree::semanticGetStringValue(TypeLex value, ExpresData *data, int type) {
     if (!flagInterpret)
         return ;
+    double val = (double) strtoul(value, nullptr, 0);
 
-    double val = atof(value);
     if (isInt(val)) {
         data->dataValue.vInt = (int) val;
         data->dataType = TYPE_INTEGER;
@@ -502,6 +504,8 @@ void Tree::semanticMakeBiOperation(ExpresData *data1, ExpresData *data2, int typ
     else
         switch (data1->dataType) {
             case TYPE_INTEGER:
+            case TYPE_SHORT:
+            case TYPE_LONG:
                 value1.vDouble = data1->dataValue.vInt;
                 break;
             case TYPE_DOUBLE:
@@ -514,12 +518,16 @@ void Tree::semanticMakeBiOperation(ExpresData *data1, ExpresData *data2, int typ
     else
         switch (data2->dataType) {
             case TYPE_INTEGER:
+            case TYPE_SHORT:
+            case TYPE_LONG:
                 value2.vDouble = data2->dataValue.vInt;
                 break;
             case TYPE_DOUBLE:
                 value2.vDouble = data2->dataValue.vDouble;
                 break;
         }
+    if (maxType == TYPE_SHORT || maxType == TYPE_LONG)
+        maxType = TYPE_INTEGER;
 
     switch (type) {
         case TypeBitOr:

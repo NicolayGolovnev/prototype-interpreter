@@ -1,0 +1,23 @@
+struct abc {
+    short s = 5;
+    int a = 33;
+    long l = 55;
+    double b = 10;
+};
+
+int main() {
+
+    abc a;
+    short s1;
+    int i1;
+    long l1;
+    double d1;
+
+    s1 = a.s;
+    i1 = a.a;
+    l1 = a.s;
+    d1 = a.b;
+    d1 = a.l;
+
+    return 1;
+}

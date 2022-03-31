@@ -107,7 +107,7 @@ public:
     //#3
     void semanticSetValue(Tree* a, ExpresData* data);
     void semanticGetData(Tree* a, ExpresData* data);
-    void semanticGetStringValue(TypeLex value, ExpresData* data);
+    void semanticGetStringValue(TypeLex value, ExpresData* data, int type);
 
     //#4
     void semanticMakeBiOperation(ExpresData* data1, ExpresData* data2, int type);

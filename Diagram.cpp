@@ -564,7 +564,7 @@ void Diagram::typeElemExpression(ExpresData* ed) {
     }
     else if (isConst(type)) {
         scaner->scan(lex);
-        root->semanticGetStringValue(lex, ed);
+        root->semanticGetStringValue(lex, ed, type);
         return ;
     }
     else if (type == TypeIdent) {

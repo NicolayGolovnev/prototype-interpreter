@@ -109,7 +109,7 @@ exitScan:
                 return TypeErr;
             }
         // expNum
-        if ((text[pos] == 'E') || (text[pos] == 'e')) {
+        if ((text[pos + 1] == 'E') || (text[pos + 1] == 'e')) {
             lex[i++] = text[pos++];
             goto expConst;
         }

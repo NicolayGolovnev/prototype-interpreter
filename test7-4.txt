@@ -1,0 +1,30 @@
+struct abc {
+    int a = 33;
+    double b = 10;
+};
+
+struct abc1 {
+    abc a, b;
+    int q;
+};
+
+int main() {
+
+    abc a, b;
+    abc1 c;
+    int aa = 2, a1 = 3, bb = 5;
+    c.q = aa | bb;
+    c.a.a = c.b.a & bb & a1;
+    c.a.b = c.b.a;
+    {
+        int test = 0xfff;
+        int a;
+        a = test == 4095;
+    }
+    for (int i = 0; i <= bb; i = i + 1)
+        c.q = c.q + i;
+    c.b.a = 0xff != 0xf;
+    c.b.b = 0xff;
+
+    return 1;
+}
